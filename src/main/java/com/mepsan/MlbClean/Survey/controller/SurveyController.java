@@ -5,6 +5,7 @@
 package com.mepsan.MlbClean.Survey.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mepsan.MlbClean.Dto.SurveyDto;
 import com.mepsan.MlbClean.Survey.business.SurveyService;
 import com.mepsan.MlbClean.Survey.entity.SurveyEntity;
 import java.text.ParseException;
@@ -38,13 +39,13 @@ public class SurveyController {
     private SurveyService surveyService;
 
     @GetMapping("all")
-    public List<SurveyEntity> getAllSurvey() {
-        return surveyService.getAllSurvey();
+    public List<SurveyDto> getAllSurvey() {
+        return surveyService.getAllSurvey().getData();
     }
 
     @GetMapping("{id}")
-    public Optional<SurveyEntity> getSurveyById(@PathVariable int id) {
-        return surveyService.getSurveyById(id);
+    public SurveyDto getSurveyById(@PathVariable int id) {
+        return surveyService.getSurveyById(id).getData();
     }
 
 //    @GetMapping("device/{id}")
@@ -52,18 +53,18 @@ public class SurveyController {
 //        return surveyService.getSurveyByDeviceId(deviceId);
 //    }
     @GetMapping("device/{id}")
-    public List<SurveyEntity> getSurveyByDeviceId(@PathVariable(name = "id") int deviceId) {
-        return surveyService.getSurveyByDeviceId(deviceId);
+    public List<SurveyDto> getSurveyByDeviceId(@PathVariable(name = "id") int deviceId) {
+        return surveyService.getSurveyByDeviceId(deviceId).getData();
     }
 
     @PostMapping("datebetween")
-    public List<SurveyEntity> getSurveyByDateBetween(@RequestBody JsonNode json) {
-        return surveyService.getSurveyByDateBetween(json);
+    public List<SurveyDto> getSurveyByDateBetween(@RequestBody JsonNode json) {
+        return surveyService.getSurveyByDateBetween(json).getData();
     }
 
     @PostMapping("save")
-    public SurveyEntity save(@RequestBody SurveyEntity survey) {
-        return surveyService.save(survey);
+    public SurveyDto save(@RequestBody SurveyEntity survey) {
+        return surveyService.save(survey).getData();
     }
 
     @GetMapping("delete/{id}")

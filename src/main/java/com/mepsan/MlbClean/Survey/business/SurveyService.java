@@ -5,31 +5,31 @@
 package com.mepsan.MlbClean.Survey.business;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mepsan.MlbClean.Core.result.DataResult;
+import com.mepsan.MlbClean.Dto.SurveyDto;
 import com.mepsan.MlbClean.Survey.entity.SurveyEntity;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collector;
 import org.springframework.http.ResponseEntity;
 
 /**
  *
  * @author nurbanu.acar
+ * 
+ * Burada herhangi bir user bilgisi alınmamıştır çünkü anketler anonimm gerçekleşecek.
  */
 public interface SurveyService {
 
-    public List<SurveyEntity> getAllSurvey();
+    public DataResult<List<SurveyDto>> getAllSurvey();
 
-    public Optional<SurveyEntity> getSurveyById(int id);
+    public DataResult<SurveyDto> getSurveyById(int id);
 
-    public List<SurveyEntity> getSurveyByDeviceId(int deviceId);
+    public DataResult<List<SurveyDto>> getSurveyByDeviceId(int deviceId);
 
-    public List<SurveyEntity> getSurveyByRatingIn(Collection ratings);
+    public DataResult<List<SurveyDto>> getSurveyByRatingIn(int startRating);
 
-    public List<SurveyEntity> getSurveyByDateBetween(JsonNode json);
+    public DataResult<List<SurveyDto>> getSurveyByDateBetween(JsonNode json);
 
-    public SurveyEntity save(SurveyEntity survey);
+    public DataResult<SurveyDto> save(SurveyEntity survey);
 
     public ResponseEntity<SurveyEntity> deleteById(int id);
 }

@@ -49,7 +49,16 @@ public class TaskDeviceConController {
     public ResponseEntity<TaskDeviceConEntity> save(@RequestBody TaskDeviceConEntity task) {
         return taskDeviceConService.save(task);
     }
-    
+
+    @GetMapping("todayTasks")
+    public DataResult<Integer> getTodayTasks() {
+        return taskDeviceConService.getTodayTasks();
+    }
+
+    @GetMapping("todayCompletedTasks")
+    public DataResult<Integer> getTodayCompletedTasks() {
+        return taskDeviceConService.getTodayCompletedTasks();
+    }
 
 //    @PutMapping("update/{taskId}/{deviceId}")
 //    public ResponseEntity<TaskDeviceConEntity> update(@RequestBody TaskDeviceConEntity taskDevice,  @PathVariable(name = "taskId") int taskId,
@@ -67,10 +76,9 @@ public class TaskDeviceConController {
     public ResponseEntity<TaskDeviceConEntity> update(@RequestBody TaskDeviceConEntity taskDevice,
             @PathVariable(name = "taskId") int taskId,
             @PathVariable(name = "deviceId") int deviceId) {
-        
+
 //        Integer frequencyValue = (Integer) task.getFrequency().orElse(0); // Eğer null ise 0 değerini kullan
 //            existTask.get().setFrequency(frequencyValue);
-        
         List<TaskDeviceConEntity> existTaskDeviceConOptionals = taskDeviceConService.getTaskDeviceConByTaskIdAndDeviceId(taskId, deviceId);
 
         List<TaskDeviceConEntity> existTaskDeviceConList = new ArrayList<>();

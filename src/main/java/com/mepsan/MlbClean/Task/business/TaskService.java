@@ -14,10 +14,16 @@ import org.springframework.http.ResponseEntity;
  * @author nurbanu.acar
  */
 public interface TaskService {
+
     public List<TaskEntity> getAllTask();
+
     public ResponseEntity<TaskEntity> getAllTaskRE();
+
     public Optional<TaskEntity> getTaskById(int id);
+
     public TaskEntity save(TaskEntity task);
+
     public TaskEntity update(TaskEntity task, int id);
+
     public ResponseEntity deleteById(int id);
 }

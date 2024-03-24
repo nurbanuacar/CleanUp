@@ -5,11 +5,16 @@
 package com.mepsan.MlbClean.Survey.business;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mepsan.MlbClean.Core.result.DataResult;
+import com.mepsan.MlbClean.Core.result.ErrorDataResult;
+import com.mepsan.MlbClean.Core.result.SuccessDataResult;
+import com.mepsan.MlbClean.Dto.SurveyDto;
 import com.mepsan.MlbClean.Survey.controller.SurveyController;
 import com.mepsan.MlbClean.Survey.entity.SurveyEntity;
 import com.mepsan.MlbClean.Survey.repository.SurveyRepository;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -31,23 +36,83 @@ public class SurveyManager implements SurveyService {
     private SurveyRepository surveyRepository;
 
     @Override
-    public List<SurveyEntity> getAllSurvey() {
-        return surveyRepository.findAll();
+    public DataResult<List<SurveyDto>> getAllSurvey() {
+        List<SurveyEntity> surveys = surveyRepository.findAll();
+        List<SurveyDto> surveyDtos = new ArrayList<>();
+        SurveyDto surveyDto = new SurveyDto();
+
+        if (!surveys.isEmpty()) {
+            for (SurveyEntity survey : surveys) {
+                surveyDto.setId(survey.getId());
+                surveyDto.setComment(survey.getComment());
+                surveyDto.setDeviceId(survey.getDeviceId());
+                surveyDto.setPerson(survey.getPerson());
+                surveyDto.setRating(survey.getRating());
+                surveyDto.setSurveyDate(survey.getSurveyDate());
+                surveyDtos.add(surveyDto);
+            }
+            return new SuccessDataResult<>(surveyDtos);
+        } else {
+            return new ErrorDataResult<>("Hiçbir Anket Bulunamadı.");
+        }
     }
 
     @Override
-    public Optional<SurveyEntity> getSurveyById(int id) {
-        return surveyRepository.findById(id);
+    public DataResult<SurveyDto> getSurveyById(int id) {
+        Optional<SurveyEntity> survey = surveyRepository.findById(id);
+        SurveyDto surveyDto = new SurveyDto();
+        if (survey.isPresent()) {
+            surveyDto.setComment(survey.get().getComment());
+            surveyDto.setDeviceId(survey.get().getDeviceId());
+            surveyDto.setId(survey.get().getId());
+            surveyDto.setPerson(survey.get().getPerson());
+            surveyDto.setRating(survey.get().getRating());
+            surveyDto.setSurveyDate(survey.get().getSurveyDate());
+            return new SuccessDataResult<>(surveyDto);
+        } else {
+            return new ErrorDataResult<>("Anket Bulunamadı.");
+        }
     }
 
     @Override
-    public List<SurveyEntity> getSurveyByDeviceId(int deviceId) {
-        return surveyRepository.findByDeviceId(deviceId);
+    public DataResult<List<SurveyDto>> getSurveyByDeviceId(int deviceId) {
+        List<SurveyEntity> surveys = surveyRepository.findByDeviceId(deviceId);
+        List<SurveyDto> surveyDtos = new ArrayList<>();
+        SurveyDto surveyDto = new SurveyDto();
+
+        if (!surveys.isEmpty()) {
+            for (SurveyEntity survey : surveys) {
+                surveyDto.setId(survey.getId());
+                surveyDto.setComment(survey.getComment());
+                surveyDto.setDeviceId(survey.getDeviceId());
+                surveyDto.setPerson(survey.getPerson());
+                surveyDto.setRating(survey.getRating());
+                surveyDto.setSurveyDate(survey.getSurveyDate());
+                surveyDtos.add(surveyDto);
+            }
+            return new SuccessDataResult<>(surveyDtos);
+        } else {
+            return new ErrorDataResult<>("Cihaza Ait Hiçbir Anket Bulunamadı.");
+        }
     }
 
     @Override
-    public SurveyEntity save(SurveyEntity survey) {
-        return surveyRepository.save(survey);
+    public DataResult<SurveyDto> save(SurveyEntity survey) {
+        
+        SurveyEntity newSurvey = surveyRepository.save(survey);
+
+        if (newSurvey.getId() > 0) {
+            SurveyDto surveyDto = new SurveyDto();
+            surveyDto.setId(survey.getId());
+            surveyDto.setComment(survey.getComment());
+            surveyDto.setDeviceId(survey.getDeviceId());
+            surveyDto.setPerson(survey.getPerson());
+            surveyDto.setRating(survey.getRating());
+            surveyDto.setSurveyDate(survey.getSurveyDate());
+            return new SuccessDataResult<>(surveyDto);
+        } else {
+            return new ErrorDataResult<>("Anket Kaydedilirken Bir Hata Oluştu");
+        }
     }
 
     @Override
@@ -63,7 +128,7 @@ public class SurveyManager implements SurveyService {
     }
 
     @Override
-    public List<SurveyEntity> getSurveyByDateBetween(JsonNode json) {
+    public DataResult<List<SurveyDto>> getSurveyByDateBetween(JsonNode json) {
         Date startDate = new Date();
         Date endDate = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-yyyy HH:mm:ss");
@@ -75,12 +140,49 @@ public class SurveyManager implements SurveyService {
             System.out.println("---- getSurveyByDateBetween CATCH ----------- " + ex);
             Logger.getLogger(SurveyController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return surveyRepository.findAllBySurveyDateBetween(startDate, endDate);
+
+        List<SurveyEntity> surveys = surveyRepository.findAllBySurveyDateBetween(startDate, endDate);
+        List<SurveyDto> surveyDtos = new ArrayList<>();
+        SurveyDto surveyDto = new SurveyDto();
+
+        if (!surveys.isEmpty()) {
+            for (SurveyEntity survey : surveys) {
+                surveyDto.setId(survey.getId());
+                surveyDto.setComment(survey.getComment());
+                surveyDto.setDeviceId(survey.getDeviceId());
+                surveyDto.setPerson(survey.getPerson());
+                surveyDto.setRating(survey.getRating());
+                surveyDto.setSurveyDate(survey.getSurveyDate());
+                surveyDtos.add(surveyDto);
+            }
+            return new SuccessDataResult<>(surveyDtos);
+        }else{
+            return new ErrorDataResult<>("Tarih Aralığında Anket Bulunamadı");
+        }
     }
 
     @Override
-    public List<SurveyEntity> getSurveyByRatingIn(Collection ratings) {
-        return surveyRepository.findByRatingIn(ratings);
+    public DataResult<List<SurveyDto>> getSurveyByRatingIn(int startRating) {
+        
+        List<SurveyEntity> surveys = surveyRepository.findByRatingIn(startRating);
+        List<SurveyDto> surveyDtos = new ArrayList<>();
+        SurveyDto surveyDto = new SurveyDto();
+
+        if (!surveys.isEmpty()) {
+            for (SurveyEntity survey : surveys) {
+                surveyDto.setId(survey.getId());
+                surveyDto.setComment(survey.getComment());
+                surveyDto.setDeviceId(survey.getDeviceId());
+                surveyDto.setPerson(survey.getPerson());
+                surveyDto.setRating(survey.getRating());
+                surveyDto.setSurveyDate(survey.getSurveyDate());
+                surveyDtos.add(surveyDto);
+            }
+            return new SuccessDataResult<>(surveyDtos);
+        }else{
+            return new ErrorDataResult<>("Anket Bulunamadı");
+        }
+        
     }
 
 }

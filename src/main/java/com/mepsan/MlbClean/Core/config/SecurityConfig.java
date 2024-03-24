@@ -31,6 +31,7 @@ public class SecurityConfig {
         registrationBean.addUrlPatterns("/api/taskinfo/*");
         registrationBean.addUrlPatterns("/api/device/*");
         registrationBean.addUrlPatterns("/api/survey/*");
+        registrationBean.addUrlPatterns("/api/v2/survey/*");
         return registrationBean;
     }
 
