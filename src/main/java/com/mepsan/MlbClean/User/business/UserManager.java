@@ -33,19 +33,14 @@ public class UserManager implements UserService {
 
     @Override
     public DataResult<List<UserDto>> getAllUser() {
-        List<UserEntity> userEntities = new ArrayList<>();
-        List<UserDto> userDtos = new ArrayList<>();
-        UserDto userDto = new UserDto();
-
-        userEntities = userRepository.findAll();
+        List<UserEntity> userEntities = userRepository.findAll();
         if (!userEntities.isEmpty()) {
+            List<UserDto> userDtos = new ArrayList<>();
             for (UserEntity user : userEntities) {
-                userDto.setName(user.getName());
-                userDto.setSurname(user.getSurname());
-                userDto.setUsername(user.getUsername());
+                UserDto userDto = new UserDto(user.getId(), user.getName(), user.getSurname(), user.getUsername(), user.isIsAdmin());
                 userDtos.add(userDto);
             }
-            return new SuccessDataResult<>(userDtos);
+            return new SuccessDataResult<>("Tüm Kullanıcılar Başarılı Şekilde Listelenmiştir.", userDtos);
         } else {
             return new ErrorDataResult<>("Herhangi bir kullanıcı bulunamadı.");
         }
@@ -54,14 +49,11 @@ public class UserManager implements UserService {
     @Override
     public DataResult<UserDto> getUserById(int id) {
         Optional<UserEntity> user;
-        UserDto userDto = new UserDto();
         user = userRepository.findById(id);
         if (user.isPresent()) {
-            userDto.setUsername(user.get().getUsername());
-            userDto.setName(user.get().getName());
-            userDto.setSurname(user.get().getSurname());
-            userDto.setIsAdmin(user.get().isIsAdmin());
-            return new SuccessDataResult<>(userDto);
+            UserEntity existUser = user.get();
+            UserDto userDto = new UserDto(existUser.getUsername(), existUser.getName(), existUser.getSurname(), existUser.isIsAdmin());
+            return new SuccessDataResult<>("Kullanıcı Bulundu.", userDto);
         } else {
             return new ErrorDataResult<>("Kullanıcı Bulunamadı");
         }
@@ -69,11 +61,18 @@ public class UserManager implements UserService {
 
     @Override
     public DataResult<List<UserDto>> getUserByIsAdmin(boolean isAdmin) {
-
+        String type = isAdmin ? "Admin" : "Personel";
         List<UserEntity> users = userRepository.findByIsAdmin(isAdmin);
-        List<UserDto> userDtos = new ArrayList<>();
-
-        return new SuccessDataResult(userDtos);
+        if (!users.isEmpty()) {
+            List<UserDto> userDtos = new ArrayList<>();
+            for (UserEntity user : users) {
+                UserDto userDto = new UserDto(user.getName(), user.getSurname(), user.getUsername(), user.isIsAdmin());
+                userDtos.add(userDto);
+            }
+            return new SuccessDataResult<>(type + " Kullanıcıları Başarılı Listelenmiştir.", userDtos);
+        } else {
+            return new ErrorDataResult<>("Herhangi Admin Kullanıcı Bulunamadı.");
+        }
     }
 
     @Override
@@ -106,21 +105,34 @@ public class UserManager implements UserService {
 
         UserEntity newUser = userRepository.save(user);
         if (newUser.getId() > 0) {
-            UserDto userDto = new UserDto();
-            userDto.setName(newUser.getName());
-            userDto.setSurname(newUser.getSurname());
-            userDto.setUsername(newUser.getUsername());
-            userDto.setIsAdmin(newUser.isIsAdmin());
+            UserDto userDto = new UserDto(newUser.getName(), newUser.getSurname(), newUser.getUsername(), newUser.isIsAdmin());
             return new SuccessDataResult<>("Kullanıcı Oluşturuldu.", userDto);
-        }else{
+        } else {
             return new ErrorDataResult<>("Kullanıcı Oluşturulurken Hata Oluştu.");
         }
     }
 
     @Override
-    public UserEntity update(UserEntity user, int id) {
+    public DataResult<UserDto> update(UserDto user, int id, int processId) {
+        Optional<UserEntity> existUser = userRepository.findById(id);
 
-        return userRepository.save(user);
+        if (existUser.isPresent()) {
+            existUser.get().setName(user.getName());
+            existUser.get().setSurname(user.getSurname());
+            existUser.get().setUsername(user.getUsername());
+            existUser.get().setIsAdmin(user.isIsAdmin());
+            existUser.get().setUpdateId(processId);
+            existUser.get().setUpdateTime(new Date());
+            UserEntity updatedUser = userRepository.save(existUser.get());
+            if (updatedUser != null) {
+                UserDto userDto = new UserDto(updatedUser.getName(), updatedUser.getSurname(), updatedUser.getUsername(), updatedUser.isIsAdmin());
+                return new SuccessDataResult<>("Kullanıcı Güncelleme Başarılı.", userDto);
+            } else {
+                return new ErrorDataResult("Kullanıcı Güncellenemedi.");
+            }
+        } else {
+            return new ErrorDataResult<>("Kullanıcı Bulunamadı");
+        }
     }
 
 }

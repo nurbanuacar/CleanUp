@@ -4,14 +4,13 @@
  */
 package com.mepsan.MlbClean.Dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  *
  * @author nurbanu.acar
  */
 public class UserDto {
 
+    private int id;
     private String name;
     private String surname;
     private String username;
@@ -20,13 +19,35 @@ public class UserDto {
     public UserDto() {
     }
 
+    public UserDto(int id, String name, String surname, String username, boolean isAdmin) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.isAdmin = isAdmin;
+    }
+
     public UserDto(String name, String surname, String username, boolean isAdmin) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.isAdmin = isAdmin;
     }
-    
+
+    public UserDto(String name, String surname, String username) {
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -58,5 +79,5 @@ public class UserDto {
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
-    
+
 }

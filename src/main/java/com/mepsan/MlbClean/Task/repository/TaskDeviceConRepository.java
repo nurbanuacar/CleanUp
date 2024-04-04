@@ -7,9 +7,7 @@ package com.mepsan.MlbClean.Task.repository;
 import com.mepsan.MlbClean.Task.entity.TaskDeviceConEntity;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -23,10 +21,16 @@ public interface TaskDeviceConRepository extends JpaRepository<TaskDeviceConEnti
     public List<TaskDeviceConEntity> findAll();
 
     public List<TaskDeviceConEntity> findByDeviceId(int deviceId);
-    
+
     public List<TaskDeviceConEntity> findByTaskIdAndDeviceId(int taskId, int deviceId);
 
+    public List<TaskDeviceConEntity> findByFrequency(int frequency);
 
-//    @Query("SELECT tdc FROM general.task_device_con tdc WHERE tdc.completedate BETWEEN ?1 AND ?2")
-//    public List<TaskDeviceConEntity> findAllByTaskDeviceConCompleteDateBetween(Date startDate, Date endDate);
+    public List<TaskDeviceConEntity> findByIsCheck(boolean isCheck);
+
+    public List<TaskDeviceConEntity> findByBeginDateBetween(Date startDate, Date endDate);
+
+    //BURAYA CALISACAK BİR SORGU OLUSTURAMADIM
+//    @Query(value = "SELECT new com.mepsan.MlbClean.Dto.TaskDeviceConDto(tdc.id, tdc.completedate, tdc.device_id, tdc.is_check, tdc.task_id, tdc.user_id, tdc.frequency, tdc.frequency_array) FROM general.task_device_con tdc WHERE tdc.completedate BETWEEN ?1 AND ?2", nativeQuery = true)
+//    public List<TaskDeviceConDto> findAllByTaskDeviceConCompleteDateBetween(Date startDate, Date endDate);
 }

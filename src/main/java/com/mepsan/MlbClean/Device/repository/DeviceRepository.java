@@ -5,6 +5,7 @@
 package com.mepsan.MlbClean.Device.repository;
 
 import com.mepsan.MlbClean.Device.entity.DeviceEntity;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DeviceRepository extends JpaRepository<DeviceEntity, Integer> {
 
+    public Optional<DeviceEntity> findByDeviceName(String deviceName);
 }

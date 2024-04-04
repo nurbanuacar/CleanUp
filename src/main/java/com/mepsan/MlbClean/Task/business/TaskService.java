@@ -4,10 +4,10 @@
  */
 package com.mepsan.MlbClean.Task.business;
 
+import com.mepsan.MlbClean.Core.result.DataResult;
+import com.mepsan.MlbClean.Dto.TaskDto;
 import com.mepsan.MlbClean.Task.entity.TaskEntity;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.http.ResponseEntity;
 
 /**
  *
@@ -15,15 +15,15 @@ import org.springframework.http.ResponseEntity;
  */
 public interface TaskService {
 
-    public List<TaskEntity> getAllTask();
+    public DataResult<List<TaskDto>> getAllTask();
 
-    public ResponseEntity<TaskEntity> getAllTaskRE();
+    public DataResult<TaskDto> getTaskById(int id);
 
-    public Optional<TaskEntity> getTaskById(int id);
+    public DataResult<TaskDto> save(TaskEntity task, int processId);
 
-    public TaskEntity save(TaskEntity task);
+    public DataResult<TaskDto> update(TaskDto task, int id, int updateId);
 
-    public TaskEntity update(TaskEntity task, int id);
-
-    public ResponseEntity deleteById(int id);
+    public void deleteById(int id);
+    
+    public DataResult deleteTask(int id, int processId);
 }

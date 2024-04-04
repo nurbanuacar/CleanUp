@@ -18,17 +18,18 @@ public class SurveyDto {
     private String person;
     private int rating;
     private Date surveyDate;
-    private DeviceEntity deviceId;
+    private DeviceEntity device;
 
     public SurveyDto() {
     }
 
-    public SurveyDto(String comment, String person, int rating, Date surveyDate, DeviceEntity deviceId) {
+    public SurveyDto(int id, String comment, String person, int rating, Date surveyDate, DeviceEntity device) {
+        this.id = id;
         this.comment = comment;
         this.person = person;
         this.rating = rating;
         this.surveyDate = surveyDate;
-        this.deviceId = deviceId;
+        this.device = device;
     }
 
     public int getId() {
@@ -71,12 +72,12 @@ public class SurveyDto {
         this.surveyDate = surveyDate;
     }
 
-    public DeviceEntity getDeviceId() {
-        return deviceId;
+    public DeviceEntity getDevice() {
+        return device;
     }
 
-    public void setDeviceId(DeviceEntity deviceId) {
-        this.deviceId = deviceId;
+    public void setDevice(DeviceEntity device) {
+        this.device = device;
     }
 
 }

@@ -48,14 +48,25 @@ public class SurveyControllerDR {
     }
 
     @PostMapping("save")
-    public DataResult<SurveyDto> save(@RequestBody SurveyEntity survey, HttpServletRequest request) {
-        String id = (String) request.getAttribute("userId");
-        int userId = Integer.parseInt(id);
+    public DataResult<SurveyDto> save(@RequestBody SurveyEntity survey, HttpServletRequest httpServletRequest) {
         return surveyService.save(survey);
     }
 
     @PostMapping("datebetween")
     public DataResult<List<SurveyDto>> getSurveyByDateBetween(@RequestBody JsonNode json) {
         return surveyService.getSurveyByDateBetween(json);
+    }
+    
+    @GetMapping("rating/{rating}")
+    public DataResult<List<SurveyDto>> getSurveyByRating(@PathVariable int rating) {
+        return surveyService.getSurveyByRating(rating);
+    }
+    
+    @GetMapping("delete/{id}")
+    public DataResult delete(@PathVariable(name = "id") int id, HttpServletRequest httpServletRequest) {
+        String tempId = (String) httpServletRequest.getAttribute("userId");
+        int updateId = Integer.parseInt(tempId);
+
+        return surveyService.deleteSurvey(id, updateId);
     }
 }

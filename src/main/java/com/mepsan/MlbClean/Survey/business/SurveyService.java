@@ -14,8 +14,9 @@ import org.springframework.http.ResponseEntity;
 /**
  *
  * @author nurbanu.acar
- * 
- * Burada herhangi bir user bilgisi alınmamıştır çünkü anketler anonimm gerçekleşecek.
+ *
+ * Burada herhangi bir user bilgisi alınmamıştır çünkü anketler anonimm
+ * gerçekleşecek.
  */
 public interface SurveyService {
 
@@ -25,11 +26,13 @@ public interface SurveyService {
 
     public DataResult<List<SurveyDto>> getSurveyByDeviceId(int deviceId);
 
-    public DataResult<List<SurveyDto>> getSurveyByRatingIn(int startRating);
+    public DataResult<List<SurveyDto>> getSurveyByRating(int rating);
 
     public DataResult<List<SurveyDto>> getSurveyByDateBetween(JsonNode json);
 
     public DataResult<SurveyDto> save(SurveyEntity survey);
 
-    public ResponseEntity<SurveyEntity> deleteById(int id);
+    public void deleteById(int id);
+
+    public DataResult deleteSurvey(int id, int updateId);
 }

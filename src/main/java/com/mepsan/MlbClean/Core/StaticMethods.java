@@ -32,13 +32,18 @@ public class StaticMethods {
 
     public static Date getLastMonthDate() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -30);
+        cal.add(Calendar.MONTH, -1);
         return cal.getTime();
     }
 
     public static Date convertStringToDate(String dateString) throws ParseException {
-        DateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         return dateFormat.parse(dateString);
+    }
+
+    public static String dateToString(Date date) throws ParseException { 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        return dateFormat.format(date);
     }
 
     public static int[] arrayOfZero() {

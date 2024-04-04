@@ -5,6 +5,9 @@
 package com.mepsan.MlbClean.Task.business;
 
 import com.mepsan.MlbClean.Core.result.DataResult;
+import com.mepsan.MlbClean.Dto.BetweenDateDto;
+import com.mepsan.MlbClean.Dto.TaskDeviceConDto;
+import com.mepsan.MlbClean.Dto.TaskStatusResponseDto;
 import com.mepsan.MlbClean.Task.entity.TaskDeviceConEntity;
 import java.util.Date;
 import java.util.List;
@@ -17,13 +20,15 @@ import org.springframework.http.ResponseEntity;
  */
 public interface TaskDeviceConService {
 
-    public List<TaskDeviceConEntity> getAllTaskDeviceCon();
+    public DataResult<List<TaskDeviceConDto>> getAllTaskDeviceCon();
 
-    public ResponseEntity<TaskDeviceConEntity> save(TaskDeviceConEntity taskDeviceConEntity);
+    public DataResult<TaskDeviceConDto> save(TaskDeviceConDto taskDeviceConDto, int processId); 
 
     public List<TaskDeviceConEntity> update(TaskDeviceConEntity taskDeviceConEntity, int id);
 
-    public List<TaskDeviceConEntity> getTaskDeviceConByDeviceId(int deviceId);
+    public DataResult<TaskDeviceConDto> updateTaskInfo(TaskDeviceConDto taskDeviceConDto, int id, int updateId);
+
+    public DataResult<List<TaskDeviceConDto>> getTaskDeviceConByDeviceId(int deviceId);
 
     public DataResult<TaskDeviceConEntity> getTaskDeviceConById(int id);
 
@@ -32,15 +37,19 @@ public interface TaskDeviceConService {
      */
     public List<TaskDeviceConEntity> getTaskDeviceConByTaskIdAndDeviceId(int taskId, int deviceId);
 
-    public DataResult<Integer> getTodayTasks();
+    public DataResult<TaskStatusResponseDto> getTodayTaskStatus();
 
-    public DataResult<Integer> getTodayCompletedTasks();
+    public DataResult<Boolean> completeTask(int taskId, int updateId);
 
-    public List<TaskDeviceConEntity> getTaskDeviceConByDateBetween(Date startDate, Date endDate);
+    public DataResult deleteTaskDeviceCon(int taskInfoId, int processId);
+            
+    public DataResult<List<TaskDeviceConDto>> getTaskDeviceConByDateBetween(BetweenDateDto dateJson);
 
-    public List<TaskDeviceConEntity> getTaskDeviceConDaily();
+    public DataResult<List<TaskDeviceConDto>> getTaskDeviceConDaily();
 
-    public List<TaskDeviceConEntity> getTaskDeviceConWeekly();
+    public DataResult<List<TaskDeviceConDto>> getTaskDeviceConWeekly();
 
-    public List<TaskDeviceConEntity> getTaskDeviceConMonthly();
+    public DataResult<List<TaskDeviceConDto>> getTaskDeviceConMonthly();
+    
+    public DataResult<List<TaskDeviceConDto>> getCompletedTaskDeviceCon();
 }

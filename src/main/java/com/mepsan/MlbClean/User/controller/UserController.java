@@ -70,8 +70,8 @@ public class UserController {
     }
 
     @PutMapping("update/{id}")
-    public UserDto update(@RequestBody UserEntity user, @PathVariable(name = "id") int id) {
-        return userService.save(user,1).getData();
+    public UserDto update(@RequestBody UserDto user, @PathVariable(name = "id") int id) {
+        return userService.update(user,id, 1).getData();
     }
 
 }

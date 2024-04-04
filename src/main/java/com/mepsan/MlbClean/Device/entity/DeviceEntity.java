@@ -54,14 +54,15 @@ public class DeviceEntity {
     @Column(name = "d_time")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date deleteTime;
-
+    @Column(name = "device_name",columnDefinition = "varchar(100)")
+    private String deviceName;
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskDeviceConEntity> taskDeviceCons;
 
     public DeviceEntity() {
     }
 
-    public DeviceEntity(String ip, String name, String floor, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime) {
+    public DeviceEntity(String ip, String name, String floor, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime, String deviceName) {
         this.ip = ip;
         this.name = name;
         this.floor = floor;
@@ -71,6 +72,7 @@ public class DeviceEntity {
         this.updateTime = updateTime;
         this.deleted = deleted;
         this.deleteTime = deleteTime;
+        this.deviceName = deviceName;
     }
 
     @PrePersist
@@ -162,6 +164,14 @@ public class DeviceEntity {
 
     public void setDeleteTime(Date deleteTime) {
         this.deleteTime = deleteTime;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
 }

@@ -6,6 +6,7 @@ package com.mepsan.MlbClean.Device.controller;
 
 import com.mepsan.MlbClean.Device.business.DeviceService;
 import com.mepsan.MlbClean.Device.entity.DeviceEntity;
+import com.mepsan.MlbClean.Dto.DeviceDto;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,18 @@ public class DeviceController {
     private DeviceService deviceService;
 
     @GetMapping("all")
-    public List<DeviceEntity> getAllDevice() {
-        return deviceService.getAllDevice();
+    public List<DeviceDto> getAllDevice() {
+        return deviceService.getAllDevice().getData();
     }
 
     @GetMapping("{id}")
-    public Optional<DeviceEntity> getDevice(@PathVariable(name = "id") int id) {
-        return deviceService.getDeviceById(id);
+    public DeviceDto getDevice(@PathVariable(name = "id") int id) {
+        return deviceService.getDeviceById(id).getData();
     }
 
     @PostMapping("save")
-    public DeviceEntity save(@RequestBody DeviceEntity device) {
-        return deviceService.save(device);
+    public DeviceDto save(@RequestBody DeviceEntity device) {
+        return deviceService.save(device, 1).getData();
     }
 
     @GetMapping("delete/{id}")

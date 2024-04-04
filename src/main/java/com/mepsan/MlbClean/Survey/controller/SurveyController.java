@@ -61,6 +61,11 @@ public class SurveyController {
     public List<SurveyDto> getSurveyByDateBetween(@RequestBody JsonNode json) {
         return surveyService.getSurveyByDateBetween(json).getData();
     }
+    
+    @GetMapping("rating/{rating}")
+    public List<SurveyDto> getSurveyByRating(@PathVariable int rating) {
+        return surveyService.getSurveyByRating(rating).getData();
+    }
 
     @PostMapping("save")
     public SurveyDto save(@RequestBody SurveyEntity survey) {
@@ -68,8 +73,8 @@ public class SurveyController {
     }
 
     @GetMapping("delete/{id}")
-    public ResponseEntity<SurveyEntity> delete(@PathVariable int id) {
-        return surveyService.deleteById(id);
+    public void delete(@PathVariable int id) {
+        surveyService.deleteById(id);
     }
 
 //    @GetMapping("delete/{id}")

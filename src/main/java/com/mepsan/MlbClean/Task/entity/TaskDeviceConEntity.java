@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -41,14 +41,22 @@ public class TaskDeviceConEntity {
     @ManyToOne
     @JoinColumn(name = "device_id", referencedColumnName = "id")
     private DeviceEntity device;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = true)
     private UserEntity user;
     @Column(name = "is_check", columnDefinition = "boolean default false")
     private boolean isCheck;
     @Column(name = "completedate")
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date completeDate;
-    @Column
+    @Column(name = "begindate")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date beginDate;
+    @Column(name = "enddate")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date endDate;
+    @Column(columnDefinition = "integer default 1")
+//    @Description("Gunluk -> 1, Haftalik -> 2, Aylik -> 3")
     private int frequency;
     @Column(name = "frequency_array", columnDefinition = "varchar(15)")
     private String frequencyArray;
@@ -68,12 +76,14 @@ public class TaskDeviceConEntity {
     public TaskDeviceConEntity() {
     }
 
-    public TaskDeviceConEntity(TaskEntity task, UserEntity user, DeviceEntity device, boolean isCheck, int frequency, String frequencyArray, Date completeDate, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime) {
+    public TaskDeviceConEntity(TaskEntity task, UserEntity user, DeviceEntity device, boolean isCheck, int frequency, String frequencyArray, Date completeDate, Date beginDate, Date endDate, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime) {
         this.task = task;
         this.device = device;
         this.user = user;
         this.isCheck = isCheck;
         this.completeDate = completeDate;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
         this.frequency = frequency;
         this.frequencyArray = frequencyArray;
         this.createId = createId;
@@ -84,10 +94,24 @@ public class TaskDeviceConEntity {
         this.deleteTime = new Date();
     }
 
+    public TaskDeviceConEntity(TaskEntity task, UserEntity user, DeviceEntity device, boolean isCheck, int frequency, String frequencyArray, Date completeDate, Date beginDate, Date endDate, int createId) {
+        this.task = task;
+        this.device = device;
+        this.user = user;
+        this.isCheck = isCheck;
+        this.completeDate = completeDate;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.frequency = frequency;
+        this.frequencyArray = frequencyArray;
+        this.createId = createId;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createTime = new Date();
         this.updateTime = new Date();
+//        this.beginDate = new Date();
     }
 
     @PreUpdate
@@ -141,6 +165,22 @@ public class TaskDeviceConEntity {
 
     public void setCompleteDate(Date completeDate) {
         this.completeDate = completeDate;
+    }
+
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public int getFrequency() {

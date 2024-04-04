@@ -72,10 +72,8 @@ public class UserControllerDR {
     }
 
     @PutMapping("update/{id}")
-    public DataResult<UserDto> update(@RequestBody UserEntity user, @PathVariable(name = "id") int id, HttpServletRequest httpServletRequest) {
-        String tempId = (String) httpServletRequest.getAttribute("userId");
-        int updateId = Integer.parseInt(tempId);
-
-        return userService.save(user, updateId);
+    public DataResult<UserDto> update(@RequestBody UserDto user, @PathVariable(name = "id") int id, HttpServletRequest httpServletRequest) {
+        int updateId = Integer.parseInt((String) httpServletRequest.getAttribute("userId"));
+        return userService.update(user, id, updateId);
     }
 }

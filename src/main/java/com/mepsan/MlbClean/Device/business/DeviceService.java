@@ -4,9 +4,10 @@
  */
 package com.mepsan.MlbClean.Device.business;
 
+import com.mepsan.MlbClean.Core.result.DataResult;
 import com.mepsan.MlbClean.Device.entity.DeviceEntity;
+import com.mepsan.MlbClean.Dto.DeviceDto;
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -14,11 +15,17 @@ import java.util.Optional;
  */
 public interface DeviceService {
 
-    public List<DeviceEntity> getAllDevice();
+    public DataResult<List<DeviceDto>> getAllDevice();
 
-    public Optional<DeviceEntity> getDeviceById(int id);
+    public DataResult<DeviceDto> getDeviceById(int id);
 
-    public DeviceEntity save(DeviceEntity device);
+    public DataResult<DeviceDto> getDeviceByDeviceName(String name);
+
+    public DataResult<DeviceDto> save(DeviceEntity device, int processId);
 
     public void deleteById(int id);
+
+    public DataResult deleteDevice(int id, int processId);
+
+    public DataResult<DeviceDto> update(DeviceDto deviceDto, int id, int updateId);
 }

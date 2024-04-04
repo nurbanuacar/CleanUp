@@ -23,7 +23,7 @@ public interface UserService {
 
     public DataResult<UserDto> save(UserEntity user, int processId);
 
-    public UserEntity update(UserEntity user, int id);
+    public DataResult<UserDto> update(UserDto user, int id, int processId);
 
     public DataResult deleteUser(int id, int updateId);
 

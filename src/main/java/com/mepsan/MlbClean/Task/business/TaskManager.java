@@ -4,14 +4,17 @@
  */
 package com.mepsan.MlbClean.Task.business;
 
+import com.mepsan.MlbClean.Core.result.DataResult;
+import com.mepsan.MlbClean.Core.result.ErrorDataResult;
+import com.mepsan.MlbClean.Core.result.SuccessDataResult;
+import com.mepsan.MlbClean.Dto.TaskDto;
 import com.mepsan.MlbClean.Task.entity.TaskEntity;
 import com.mepsan.MlbClean.Task.repository.TaskRepository;
-import com.mepsan.MlbClean.User.entity.UserEntity;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,47 +28,84 @@ public class TaskManager implements TaskService {
     private TaskRepository taskRepository;
 
     @Override
-    public List<TaskEntity> getAllTask() {
-        return taskRepository.findAll();
-    }
-    
-    @Override
-    public ResponseEntity<TaskEntity> getAllTaskRE() {
-        List<TaskEntity> taskList = new ArrayList<>();
-        ResponseEntity response = null;
-        taskList = taskRepository.findAll();
-        if(!taskList.isEmpty()){
-            response = ResponseEntity.ok(taskList);
-        }else{
-            response = ResponseEntity.badRequest().body("Tasks Not Found");
-        }
-        return response;
-    }
-
-    @Override
-    public Optional<TaskEntity> getTaskById(int id) {
-        return taskRepository.findById(id);
-    }
-
-    @Override
-    public TaskEntity save(TaskEntity task) {
-        return taskRepository.save(task);
-    }
-
-    @Override
-    public ResponseEntity deleteById(int id) {
-        if (taskRepository.existsById(id)) {
-            taskRepository.deleteById(id);
-
-            return ResponseEntity.ok("Task Silme Başarılı");
+    public DataResult<List<TaskDto>> getAllTask() {
+        List<TaskEntity> tasks = taskRepository.findAll();
+        if (!tasks.isEmpty()) {
+            List<TaskDto> taskDtos = new ArrayList<>();
+            for (TaskEntity task : tasks) {
+                TaskDto taskDto = new TaskDto(task.getId(), task.getName());
+                taskDtos.add(taskDto);
+            }
+            return new SuccessDataResult<>("Görev Tanımları Başarılı Şekilde ", taskDtos);
         } else {
-            return ResponseEntity.badRequest().body("Task Bulunamadı");
+            return new ErrorDataResult<>("Hiçbir Görev Tanımı Bulunamadı");
         }
     }
-    
+
     @Override
-    public TaskEntity update(TaskEntity task, int id) {
-        return taskRepository.save(task);
+    public DataResult<TaskDto> getTaskById(int id) {
+        Optional<TaskEntity> task = taskRepository.findById(id);
+
+        if (task.isPresent()) {
+            TaskDto taskDto = new TaskDto();
+            taskDto.setName(task.get().getName());
+            return new SuccessDataResult<>("Görev Tanımı Bulundu.", taskDto);
+        } else {
+            return new ErrorDataResult<>("Görev Tanımı Bulunamadı");
+        }
+    }
+
+    @Override
+    public DataResult<TaskDto> save(TaskEntity task, int processId) {
+        task.setCreateId(processId);
+        task.setUpdateId(processId);
+        task.setUpdateTime(new Date());
+        TaskEntity newTask = taskRepository.save(task);
+        if (newTask.getId() > 0) {
+            TaskDto taskDto = new TaskDto(newTask.getName());
+            return new SuccessDataResult<>("Görev Tanımı Oluşturuldu.", taskDto);
+        } else {
+            return new ErrorDataResult<>("Görev Tanımı Oluşturulamadı.");
+        }
+    }
+
+    @Override
+    public void deleteById(int id) {
+        taskRepository.deleteById(id);
+    }
+
+    @Override
+    public DataResult deleteTask(int id, int processId) {
+        Optional<TaskEntity> task = taskRepository.findById(id);
+        if (task.isPresent()) {
+            task.get().setUpdateId(processId);
+            task.get().setUpdateTime(new Date());
+            taskRepository.save(task.get());
+            taskRepository.deleteById(id);
+            return new SuccessDataResult<>("Görev Başarılı Şekilde Silindi.");
+        } else {
+            return new ErrorDataResult<>("Görev Silinirken Bir Hata Oluştu.");
+        }
+    }
+
+    @Override
+    public DataResult<TaskDto> update(TaskDto task, int id, int updateId) {
+        Optional<TaskEntity> existTask = taskRepository.findById(id);
+        if (existTask.isPresent()) {
+            existTask.get().setUpdateId(updateId);
+            existTask.get().setUpdateTime(new Date());
+            existTask.get().setName(task.getName());
+            TaskEntity updatedTask = taskRepository.save(existTask.get());
+
+            if (updatedTask != null) {
+                TaskDto taskDto = new TaskDto(updatedTask.getName());
+                return new SuccessDataResult<>("Görev Güncelleme Başarılı.", taskDto);
+            } else {
+                return new ErrorDataResult("Görev Güncellenemedi.");
+            }
+        } else {
+            return new ErrorDataResult("Görev Bulunamadı.");
+        }
     }
 
 }

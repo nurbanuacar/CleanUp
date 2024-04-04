@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -41,24 +42,26 @@ public class SurveyEntity {
     @Column
     private int rating;
     @Column(name = "surveydate")
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date surveyDate;
     @ManyToOne
     @JoinColumn(name = "device_id", referencedColumnName = "id")
-    private DeviceEntity deviceId;
+    private DeviceEntity device;
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = Boolean.FALSE;
     @Column(name = "d_time")
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date deleteTime;
 
     public SurveyEntity() {
     }
 
-    public SurveyEntity(String comment, String person, int rating, Date surveyDate, DeviceEntity deviceId, Date deleteTime) {
+    public SurveyEntity(String comment, String person, int rating, Date surveyDate, DeviceEntity device, Date deleteTime) {
         this.comment = comment;
         this.person = person;
         this.rating = rating;
         this.surveyDate = surveyDate;
-        this.deviceId = deviceId;
+        this.device = device;
         this.deleteTime = deleteTime;
     }
     
@@ -102,12 +105,12 @@ public class SurveyEntity {
         this.surveyDate = surveyDate;
     }
 
-    public DeviceEntity getDeviceId() {
-        return deviceId;
+    public DeviceEntity getDevice() {
+        return device;
     }
 
-    public void setDeviceId(DeviceEntity deviceId) {
-        this.deviceId = deviceId;
+    public void setDevice(DeviceEntity device) {
+        this.device = device;
     }
 
     public boolean isDeleted() {

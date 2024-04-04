@@ -28,8 +28,11 @@ public class SecurityConfig {
         registrationBean.addUrlPatterns("/api/user/*");
         registrationBean.addUrlPatterns("/api/v2/user/*");
         registrationBean.addUrlPatterns("/api/task/*");
+        registrationBean.addUrlPatterns("/api/v2/task/*");
         registrationBean.addUrlPatterns("/api/taskinfo/*");
+        registrationBean.addUrlPatterns("/api/v2/taskinfo/*");
         registrationBean.addUrlPatterns("/api/device/*");
+        registrationBean.addUrlPatterns("/api/v2/device/*");
         registrationBean.addUrlPatterns("/api/survey/*");
         registrationBean.addUrlPatterns("/api/v2/survey/*");
         return registrationBean;
@@ -51,7 +54,7 @@ public class SecurityConfig {
         config.addAllowedOrigin("*"); // Burada tüm originlere izin verildi. Güvenlik nedenleriyle, prodüksiyon ortamında belirli originlere izin vermelisiniz.
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/", config);
+        source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
 
     }
