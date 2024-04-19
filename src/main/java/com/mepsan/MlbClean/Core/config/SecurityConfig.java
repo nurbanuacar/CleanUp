@@ -34,7 +34,12 @@ public class SecurityConfig {
         registrationBean.addUrlPatterns("/api/device/*");
         registrationBean.addUrlPatterns("/api/v2/device/*");
         registrationBean.addUrlPatterns("/api/survey/*");
-        registrationBean.addUrlPatterns("/api/v2/survey/*");
+        registrationBean.addUrlPatterns("/api/v2/survey/all");
+        registrationBean.addUrlPatterns("/api/v2/survey/{id}");
+        registrationBean.addUrlPatterns("/api/v2/survey/device/{id}");
+        registrationBean.addUrlPatterns("/api/v2/survey/datebetween");
+        registrationBean.addUrlPatterns("/api/v2/survey/rating/{rating}");
+        registrationBean.addUrlPatterns("/api/v2/survey/delete/{id}");
         return registrationBean;
     }
 

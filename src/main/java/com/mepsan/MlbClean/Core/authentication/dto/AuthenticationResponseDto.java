@@ -4,21 +4,30 @@
  */
 package com.mepsan.MlbClean.Core.authentication.dto;
 
-
 /**
  *
  * @author nurbanu.acar
  */
 public class AuthenticationResponseDto {
+
     private int id;
     private String name;
     private String token;
+    private String refreshToken;
     private boolean isAdmin;
 
     public AuthenticationResponseDto(int id, String name, String token, boolean isAdmin) {
         this.id = id;
         this.name = name;
         this.token = token;
+        this.isAdmin = isAdmin;
+    }
+
+    public AuthenticationResponseDto(int id, String name, String token, String refreshToken, boolean isAdmin) {
+        this.id = id;
+        this.name = name;
+        this.token = token;
+        this.refreshToken = refreshToken;
         this.isAdmin = isAdmin;
     }
 
@@ -29,7 +38,7 @@ public class AuthenticationResponseDto {
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -44,6 +53,14 @@ public class AuthenticationResponseDto {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public boolean isIsAdmin() {

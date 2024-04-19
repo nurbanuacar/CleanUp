@@ -45,20 +45,19 @@ public class AuthenticationService {
                     authenticationEntity.getPassword());
             if (isTrue) {
                 String token = JwtTokenUtil.generateToken(authenticationEntity);
+                String refreshToken = JwtTokenUtil.generateRefreshToken(authenticationEntity);
                 System.out.println("TOKEENNNN " + token);
                 AuthenticationResponseDto authenticationResponseDto = new AuthenticationResponseDto(
                         authenticationEntity.getId(),
                         authenticationEntity.getName(),
                         token,
+                        refreshToken,
                         authenticationEntity.isIsAdmin());
-//                return ResponseEntity.ok(token);
                 return new SuccessDataResult<>("Giriş başarılı.", authenticationResponseDto);
             } else {
-//                return ResponseEntity.badRequest().body("Kullanıcı Adı veya Parola Hatalı.");
-                return new ErrorDataResult<>("Kullanıcı adı yada şifre yanlış.");
+                return new ErrorDataResult<>("Kullanıcı adı veya şifre yanlış.");
             }
         } else {
-//            return ResponseEntity.badRequest().body("Kullanıcı Adı veya Parola Hatalı.");
             return new ErrorDataResult<>("Bir hata oluştu.");
         }
     }

@@ -24,6 +24,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         System.out.println("*************** *************");
         String token = extractTokenFromRequest(request);
+        String refreshToken = extractRefreshTokenFromRequest(request);
         if (token != null && JwtTokenUtil.validateToken(token)) {
             String id = JwtTokenUtil.getIdFromToken(token);
             request.setAttribute("userId", id);
@@ -32,19 +33,18 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         } else {
             if (token == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            } //  else if (JwtTokenUtil.isExpired(token)) {
-            //                            // JWT süresi dolduğunda refresh token kontrolü yap
-            //                            String refreshToken = extractRefreshTokenFromRequest(request);
-            //                            if (refreshToken != null && JwtTokenUtil.validateToken(refreshToken)) {
-            //                                // Refresh token geçerli ise, yeni bir JWT oluştur ve istemciye gönder
-            //                                String newToken = JwtTokenUtil.generateRefreshToken(refreshToken);
-            //                                response.setHeader("Authorization", "Bearer " + newToken);
-            //                                filterChain.doFilter(request, response);
-            //                            } else {
-            //                                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            //                            }
-            //                        } 
-            else {
+            } else if (!JwtTokenUtil.isExpired(refreshToken)) {
+                System.out.println("==== ELSE IFE GIRDI ==========");
+                // JWT süresi dolduğunda refresh token kontrolü yap
+                if (refreshToken != null && JwtTokenUtil.validateRefreshToken(refreshToken)) {
+                    // Refresh token geçerli ise, yeni bir JWT oluştur ve istemciye gönder
+                    String newToken = JwtTokenUtil.generateTokenFromRefreshToken(refreshToken);
+                    response.setHeader("Authorization", "Bearer " + newToken);
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
         }
@@ -61,6 +61,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractRefreshTokenFromRequest(HttpServletRequest request) {
+        System.out.println("************ EXTRACT REFRESH TOKEN **************");
         // Header'dan Refresh-Token'ı al
         return request.getHeader("Refresh-Token");
     }
