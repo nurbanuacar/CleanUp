@@ -12,6 +12,7 @@ import com.mepsan.MlbClean.Core.authentication.repository.AuthenticationReposito
 import com.mepsan.MlbClean.Core.result.DataResult;
 import com.mepsan.MlbClean.Core.result.ErrorDataResult;
 import com.mepsan.MlbClean.Core.result.SuccessDataResult;
+import com.mepsan.MlbClean.Dto.UserDto;
 import com.mepsan.MlbClean.User.entity.UserEntity;
 import java.util.Date;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public class AuthenticationService {
         Optional<UserEntity> optionalAuthenticationEntity = authenticationRepository
                 .findByUsername(user.getUsername());
         if (optionalAuthenticationEntity.isPresent()) {
-            System.out.println("====================== logindeki user bilgisi == "+optionalAuthenticationEntity.get().getName());
+            System.out.println("====================== logindeki user bilgisi == " + optionalAuthenticationEntity.get().getName());
             UserEntity authenticationEntity = optionalAuthenticationEntity.get();
             boolean isTrue = authenticationUtil.isPasswordMatch(user.getPassword(),
                     authenticationEntity.getPassword());
@@ -72,6 +73,28 @@ public class AuthenticationService {
         authenticationEntity.setIsAdmin(false);
         authenticationRepository.save(authenticationEntity);
         return login(requestDto);
+    }
+
+    public DataResult<UserDto> updatePassword(AuthenticationRequestDto requestDto, int updateId) {
+        Optional<UserEntity> existingUser = authenticationRepository.findByUsername(requestDto.getUsername());
+        if (existingUser.isPresent()) {
+            Date date = new Date();
+            UserEntity user = new UserEntity(
+                    existingUser.get().getName(),
+                    existingUser.get().getSurname(),
+                    existingUser.get().getUsername(),
+                    requestDto.getPassword(),
+                    existingUser.get().isIsAdmin(), updateId, date);
+            UserEntity updatedUser = authenticationRepository.save(user);
+            if (updatedUser != null) {
+                UserDto userDto = new UserDto(updatedUser.getName(), updatedUser.getSurname(), updatedUser.getUsername(), updatedUser.isIsAdmin());
+                return new SuccessDataResult<>("Kullanıcı Parola Güncelleme Başarılı.", userDto);
+            } else {
+                return new ErrorDataResult("Kullanıcı Parola Güncellenemedi.");
+            }
+        } else {
+            return new ErrorDataResult<>("Kullanıcı Bulunamadı");
+        }
     }
 
     public DataResult<String> getHashedPassword(String password) {
