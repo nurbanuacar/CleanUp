@@ -8,6 +8,8 @@ import com.mepsan.MlbClean.Core.authentication.dto.AuthenticationRequestDto;
 import com.mepsan.MlbClean.Core.authentication.dto.AuthenticationResponseDto;
 import com.mepsan.MlbClean.Core.authentication.service.AuthenticationService;
 import com.mepsan.MlbClean.Core.result.DataResult;
+import com.mepsan.MlbClean.Dto.UserDto;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +33,17 @@ public class AuthenticationController {
     public DataResult<AuthenticationResponseDto> login(@RequestBody AuthenticationRequestDto requestDto) {
         return authenticationService.login(requestDto);
     }
-    
+
     @PostMapping("create")
     public DataResult<String> createUser(@RequestBody AuthenticationRequestDto requestDto) {
         return authenticationService.getHashedPassword(requestDto.getPassword());
+    }
+
+    @PostMapping("update")
+    public DataResult<UserDto> updatePassword(@RequestBody AuthenticationRequestDto requestDto, HttpServletRequest httpServletRequest) {
+        String hashedPass = authenticationService.getHashedPassword(requestDto.getPassword()).getData();
+        requestDto.setPassword(hashedPass);
+        int updateId = Integer.parseInt((String) httpServletRequest.getAttribute("userId"));
+        return authenticationService.updatePassword(requestDto, updateId);
     }
 }

@@ -64,7 +64,7 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(String name, String surname, String username, String password, boolean isAdmin, Date completeDate, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime) {
+    public UserEntity(String name, String surname, String username, String password, boolean isAdmin, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime) {
         this.name = name;
         this.surname = surname;
         this.username = username;
@@ -76,6 +76,16 @@ public class UserEntity {
         this.updateTime = new Date();
         this.deleted = deleted;
         this.deleteTime = new Date();
+    }
+    
+        public UserEntity(String name, String surname, String username, String password, boolean isAdmin, int updateId, Date updateTime) {
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.updateId = updateId;
+        this.updateTime = new Date();
     }
 
     @PrePersist
