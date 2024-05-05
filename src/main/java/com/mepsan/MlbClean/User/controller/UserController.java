@@ -4,17 +4,13 @@
  */
 package com.mepsan.MlbClean.User.controller;
 
-import com.mepsan.MlbClean.Core.authentication.service.AuthenticationService;
 import com.mepsan.MlbClean.Core.result.DataResult;
-import com.mepsan.MlbClean.Device.entity.DeviceEntity;
 import com.mepsan.MlbClean.Dto.UserDto;
 import com.mepsan.MlbClean.User.business.UserService;
 import com.mepsan.MlbClean.User.entity.UserEntity;
 import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -61,7 +56,7 @@ public class UserController {
 
     @PostMapping("save")
     public UserDto save(@RequestBody UserEntity user) {
-        return userService.save(user,1).getData();
+        return userService.save(user, 1).getData();
     }
 
     @GetMapping("delete/{id}")
@@ -71,7 +66,7 @@ public class UserController {
 
     @PutMapping("update/{id}")
     public UserDto update(@RequestBody UserDto user, @PathVariable(name = "id") int id) {
-        return userService.update(user,id, 1).getData();
+        return userService.update(user, id, 1).getData();
     }
 
 }

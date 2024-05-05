@@ -13,12 +13,18 @@ public class TaskDto {
     
     private int id;
     private String name;
+    private int frequency;
 
     public TaskDto() {
     }
 
     public TaskDto(String name) {
         this.name = name;
+    }
+
+    public TaskDto(String name, int frequency) {
+        this.name = name;
+        this.frequency = frequency;
     }
 
     public int getId() {
@@ -42,4 +48,11 @@ public class TaskDto {
         this.name = name;
     }
 
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
 }

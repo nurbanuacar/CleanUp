@@ -21,6 +21,49 @@ public class StaticMethods {
     public static Date getYesterdayDate() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
+        System.out.println("============== DATE ============= " + cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getStartOfToday() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        System.out.println("============== START OF TODAY ============= " + cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getEndOfToday() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        System.out.println("============== END OF TODAY ============= " + cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getStartOfYesterday() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        System.out.println("============== START OF YESTERDAY ============= " + cal.getTime());
+        return cal.getTime();
+    }
+
+    public static Date getEndOfYesterday() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        System.out.println("============== END OF YESTERDAY ============= " + cal.getTime());
         return cal.getTime();
     }
 
@@ -41,7 +84,7 @@ public class StaticMethods {
         return dateFormat.parse(dateString);
     }
 
-    public static String dateToString(Date date) throws ParseException { 
+    public static String dateToString(Date date) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         return dateFormat.format(date);
     }
@@ -60,6 +103,14 @@ public class StaticMethods {
         DayOfWeek dayOfWeek = today.getDayOfWeek();
         int dayOfWeekValue = dayOfWeek.getValue();
         return dayOfWeekValue;
+    }
+
+    public static Date findWeekStart() {
+        int numberOfDay = getDayOfWeek() - 1;
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -numberOfDay);
+        System.out.println("-------- hafta bası tarih ---- " + cal.getTime());
+        return cal.getTime();
     }
 
 }

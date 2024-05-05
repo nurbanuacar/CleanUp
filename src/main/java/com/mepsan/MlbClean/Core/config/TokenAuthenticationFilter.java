@@ -62,7 +62,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractRefreshTokenFromRequest(HttpServletRequest request) {
         System.out.println("************ EXTRACT REFRESH TOKEN **************");
-        // Header'dan Refresh-Token'ı al
+        // Header'dan Refresh-Token'ı al    
         return request.getHeader("Refresh-Token");
     }
 }

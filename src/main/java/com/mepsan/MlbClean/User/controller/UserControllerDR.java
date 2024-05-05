@@ -4,6 +4,7 @@
  */
 package com.mepsan.MlbClean.User.controller;
 
+import com.mepsan.MlbClean.Core.StaticMethods;
 import com.mepsan.MlbClean.Core.result.DataResult;
 import com.mepsan.MlbClean.Dto.UserDto;
 import com.mepsan.MlbClean.User.business.UserService;

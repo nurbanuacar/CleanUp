@@ -18,16 +18,19 @@ import com.mepsan.MlbClean.Task.entity.TaskEntity;
 import com.mepsan.MlbClean.Task.repository.TaskDeviceConRepository;
 import com.mepsan.MlbClean.Task.repository.TaskRepository;
 import com.mepsan.MlbClean.User.entity.UserEntity;
-import com.mepsan.MlbClean.User.repository.UserRepository;
+import io.swagger.v3.core.util.Json;
 import java.lang.reflect.Field;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +50,7 @@ public class TaskDeviceConManager implements TaskDeviceConService {
 
     @Override
     public DataResult<List<TaskDeviceConDto>> getAllTaskDeviceCon() {
-        List<TaskDeviceConEntity> tasks = taskDeviceConRepository.findAll();
+        List<TaskDeviceConEntity> tasks = taskDeviceConRepository.findAll(Sort.by(Sort.Direction.DESC, "updateTime"));
         if (!tasks.isEmpty()) {
             List<TaskDeviceConDto> taskDtos = new ArrayList<>();
             for (TaskDeviceConEntity task : tasks) {
@@ -181,39 +184,63 @@ public class TaskDeviceConManager implements TaskDeviceConService {
 
     @Override
     public DataResult<TaskStatusResponseDto> getTodayTaskStatus() {
-
         TaskStatusResponseDto taskResponse = new TaskStatusResponseDto();
-
-//        List<TaskDeviceConEntity> allTasks = taskDeviceConRepository.findAll();
-        List<TaskDeviceConEntity> allTasks = taskDeviceConRepository.findByFrequency(2);
-        if (!allTasks.isEmpty()) {
+        List<TaskDeviceConEntity> allTodayTasks = taskDeviceConRepository.findByBeginDateBetween(StaticMethods.getStartOfToday(), StaticMethods.getEndOfToday());
+        if (!allTodayTasks.isEmpty()) {
             List<TaskDeviceConEntity> todayTasks = new ArrayList<>();
             List<TaskDeviceConEntity> todayCompletedTasks = new ArrayList<>();
-            //bugunun sayı karsılıgını bulur
-            int today = StaticMethods.getDayOfWeek();
 
             //her bir kaydin hangi gunler tekrarlanacagini bul
-            for (TaskDeviceConEntity task : allTasks) {
-                String[] frequencyStr = task.getFrequencyArray().split(",");
-                int[] frequencies = new int[frequencyStr.length];
-                for (int i = 0; i < frequencyStr.length; i++) {
-                    frequencies[i] = Integer.parseInt(frequencyStr[i]);
+            for (TaskDeviceConEntity task : allTodayTasks) {
+//                String[] frequencyStr = task.getFrequencyArray().split(",");
+//                int[] frequencies = new int[frequencyStr.length];
+//                for (int i = 0; i < frequencyStr.length; i++) {
+//                    frequencies[i] = Integer.parseInt(frequencyStr[i]);
+//                }
+//                if (frequencies[today - 1] == 1) {
+                //bugunun gorevleri listesine ekle
+                todayTasks.add(task);
+                if (task.isIsCheck() == true) {
+                    //bugunun tamamlanmis gorevleri listesine ekle
+                    todayCompletedTasks.add(task);
                 }
-                if (frequencies[today - 1] == 1) {
-                    //bugunun gorevleri listesine ekle
-                    todayTasks.add(task);
-                    if (task.isIsCheck() == true) {
-                        //bugunun tamamlanmis gorevleri listesine ekle
-                        todayCompletedTasks.add(task);
-                    }
-                }
+//                }
             }
-            taskResponse.setTodayTasks(todayTasks.size());
+            taskResponse.setTodayTasks(allTodayTasks.size());
             taskResponse.setTodayCompletedTasks(todayCompletedTasks.size());
             return new SuccessDataResult<>("Bugünün Görev Durumu Bulunmuştur.", taskResponse);
         } else {
             return new ErrorDataResult("Hiçbir Kayıt Bulunamadı.");
         }
+    }
+
+    @Override
+    public double dailyRateOfChange() {
+        TaskStatusResponseDto taskResponseToday = getTodayTaskStatus().getData();
+        TaskStatusResponseDto taskResponseYesterday = new TaskStatusResponseDto();
+        Double statusOfToday = Double.valueOf(String.valueOf(taskResponseToday.getTodayCompletedTasks())) / Double.valueOf(String.valueOf(taskResponseToday.getTodayTasks())) * 100;
+        Double statusOfYesterday;
+        List<TaskDeviceConEntity> allYesterdayTasks = taskDeviceConRepository.findByBeginDateBetween(StaticMethods.getStartOfYesterday(), StaticMethods.getEndOfYesterday());
+        if (!allYesterdayTasks.isEmpty()) {
+            List<TaskDeviceConEntity> yesterdayCompletedTasks = new ArrayList<>();
+
+            for (TaskDeviceConEntity task : allYesterdayTasks) {
+                if (task.isIsCheck() == true) {
+                    yesterdayCompletedTasks.add(task);
+                }
+            }
+            taskResponseYesterday.setTodayTasks(allYesterdayTasks.size());
+            taskResponseYesterday.setTodayCompletedTasks(yesterdayCompletedTasks.size());
+
+            int yesterdayCompleted = taskResponseYesterday.getTodayCompletedTasks();
+            int yesterdayTasks = taskResponseYesterday.getTodayTasks();
+
+            statusOfYesterday = Double.valueOf(String.valueOf(yesterdayCompleted)) / Double.valueOf(String.valueOf(yesterdayTasks)) * 100;
+        } else {
+            return statusOfToday;
+        }
+        System.out.println("============= status of daily task changing rate ================= " + (statusOfToday - statusOfYesterday));
+        return statusOfToday - statusOfYesterday;
     }
 
     @Override
@@ -356,20 +383,33 @@ public class TaskDeviceConManager implements TaskDeviceConService {
 
         List<TaskDeviceConEntity> tasksBetweenDate = taskDeviceConRepository.findByBeginDateBetween(yesterday, today);
         List<TaskDeviceConDto> taskDtos = new ArrayList<>();
-        TaskDeviceConDto taskDto = new TaskDeviceConDto();
         if (!tasksBetweenDate.isEmpty()) {
             for (TaskDeviceConEntity task : tasksBetweenDate) {
                 try {
-                    taskDto.setCompleteDate(StaticMethods.dateToString(task.getCompleteDate()));
-                    taskDto.setBeginDate(StaticMethods.dateToString(task.getBeginDate()));
-                    taskDto.setEndDate(StaticMethods.dateToString(task.getEndDate()));
-                    taskDto.setDevice(task.getDevice());
-                    taskDto.setFrequency(task.getFrequency());
-                    taskDto.setFrequencyArray(task.getFrequencyArray());
-                    taskDto.setId(task.getId());
-                    taskDto.setIsCheck(task.isIsCheck());
-                    taskDto.setTask(task.getTask());
-                    taskDto.setUser(task.getUser());
+                    TaskDeviceConDto taskDto;
+                    if (task.isIsCheck()) {
+                        taskDto = new TaskDeviceConDto(task.getId(),
+                                task.getTask(),
+                                task.getDevice(),
+                                task.getUser(),
+                                task.isIsCheck(),
+                                StaticMethods.dateToString(task.getCompleteDate()),
+                                StaticMethods.dateToString(task.getBeginDate()),
+                                StaticMethods.dateToString(task.getEndDate()),
+                                task.getFrequency(),
+                                task.getFrequencyArray());
+                    } else {
+                        taskDto = new TaskDeviceConDto(task.getId(),
+                                task.getTask(),
+                                task.getDevice(),
+                                task.getUser(),
+                                task.isIsCheck(),
+                                null,
+                                StaticMethods.dateToString(task.getBeginDate()),
+                                StaticMethods.dateToString(task.getEndDate()),
+                                task.getFrequency(),
+                                task.getFrequencyArray());
+                    }
                     taskDtos.add(taskDto);
                 } catch (ParseException ex) {
                     Logger.getLogger(TaskDeviceConManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -394,7 +434,6 @@ public class TaskDeviceConManager implements TaskDeviceConService {
                 try {
                     TaskDeviceConDto taskDto;
                     if (task.isIsCheck()) {
-
                         taskDto = new TaskDeviceConDto(task.getId(),
                                 task.getTask(),
                                 task.getDevice(),
@@ -500,6 +539,35 @@ public class TaskDeviceConManager implements TaskDeviceConService {
         } else {
             return new ErrorDataResult<>("Tamamlanmış Herhangi Bir Görev Bulunamadı.");
         }
+    }
+
+    public String getDataFromBeginningWeekToToday() {
+        Json jsonData = new Json();
+        Calendar cal = Calendar.getInstance();
+        Date beginningOfWeek = StaticMethods.findWeekStart();
+        Date tempDate = beginningOfWeek;
+        Date today = new Date();
+        while (tempDate.before(today)) {
+            try {
+                //burada temp gune bir gun ekleyip yeniden temp gune atıyorum ki devam etsin
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                String dateString = tempDate.toString();
+                cal.setTime(sdf.parse(dateString));
+                //tam burada bir gun eklemeden evvel atanmıs ve tamamlanmıs gorevleri cekmem gerekiyor.
+                //sonrasında bunu gunluk gorevlerin verisini tutmak icin olusturmus oldugum jsona ilgili gunun isminin karsisina atamam gerekiyor
+                cal.add(Calendar.DATE, 1);
+                tempDate = cal.getTime();
+            } catch (ParseException ex) {
+                Logger.getLogger(TaskDeviceConManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (tempDate.before(today)) {
+            System.out.println("temp date'im bugunden once dogru ");
+            //jsona bugunu ekle devam et
+        } else {
+
+        }
+        return null;
     }
 
     @Override

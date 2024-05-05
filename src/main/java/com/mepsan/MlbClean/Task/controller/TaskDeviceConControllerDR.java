@@ -53,6 +53,7 @@ public class TaskDeviceConControllerDR {
 
     @GetMapping("todaytaskstatus")
     public DataResult<TaskStatusResponseDto> getTodayTaskStatus() {
+        System.out.println("****** dunun bugune oranı sonucu **** " + taskDeviceConService.dailyRateOfChange());
         return taskDeviceConService.getTodayTaskStatus();
     }
 
@@ -96,7 +97,7 @@ public class TaskDeviceConControllerDR {
     public DataResult<List<TaskDeviceConDto>> getMonthlyTask() {
         return taskDeviceConService.getTaskDeviceConMonthly();
     }
-    
+
     @GetMapping("completedtasks")
     public DataResult<List<TaskDeviceConDto>> getCompletedTasks() {
         return taskDeviceConService.getCompletedTaskDeviceCon();

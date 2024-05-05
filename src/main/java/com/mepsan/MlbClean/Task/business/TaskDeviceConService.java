@@ -40,6 +40,8 @@ public interface TaskDeviceConService {
     public DataResult<TaskStatusResponseDto> getTodayTaskStatus();
 
     public DataResult<Boolean> completeTask(int taskId, int updateId);
+    
+    public double dailyRateOfChange();
 
     public DataResult deleteTaskDeviceCon(int taskInfoId, int processId);
             

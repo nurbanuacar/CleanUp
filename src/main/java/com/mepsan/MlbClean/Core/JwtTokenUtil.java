@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.security.Keys;
+import java.time.Instant;
 import java.util.function.Function;
 
 /**
@@ -24,7 +25,7 @@ import java.util.function.Function;
 public class JwtTokenUtil {
 
     private static final String SECRET_KEY = "mPcLnvrOnepoWerfulsEcrEt1qdasqwfasfaasdacxfgsdvzxzxcasgbhbsd";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 2;//60;//1 saat
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60;//1 saat
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60 * 10;//10 saat
     private static final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
@@ -101,6 +102,15 @@ public class JwtTokenUtil {
         return result;
     }
 
+//    public RefreshToken verifyExpiration(RefreshToken token) {
+//        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+//            refreshTokenRepository.delete(token);
+//            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+//        }
+//
+//        return token;
+//    }
+
 //    public static boolean isExpired(String token) {
 //        try {
 //            Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
@@ -120,7 +130,7 @@ public class JwtTokenUtil {
     }
 
     public static String generateTokenFromRefreshToken(String refreshToken) {
-                System.out.println("*-*-*-*- GENERATE TOKEN FROM !!!!! REFRESH TOKEN GIRISS -*-*-*-*-*");
+        System.out.println("*-*-*-*- GENERATE TOKEN FROM !!!!! REFRESH TOKEN GIRISS -*-*-*-*-*");
 
         // Eğer refresh token null veya boş ise, geçersiz token hatası döndür
         if (refreshToken == null || refreshToken.isEmpty()) {

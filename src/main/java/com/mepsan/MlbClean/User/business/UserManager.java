@@ -103,12 +103,17 @@ public class UserManager implements UserService {
         user.setUpdateId(processId);
         user.setPassword(password.getData());
 
-        UserEntity newUser = userRepository.save(user);
-        if (newUser.getId() > 0) {
-            UserDto userDto = new UserDto(newUser.getName(), newUser.getSurname(), newUser.getUsername(), newUser.isIsAdmin());
-            return new SuccessDataResult<>("Kullanıcı Oluşturuldu.", userDto);
+        Optional<UserEntity> existingUser = userRepository.findByUsername(user.getUsername());
+        if (!existingUser.isPresent()) {
+            UserEntity newUser = userRepository.save(user);
+            if (newUser.getId() > 0) {
+                UserDto userDto = new UserDto(newUser.getName(), newUser.getSurname(), newUser.getUsername(), newUser.isIsAdmin());
+                return new SuccessDataResult<>("Kullanıcı Oluşturuldu.", userDto);
+            } else {
+                return new ErrorDataResult<>("Kullanıcı Oluşturulurken Hata Oluştu.");
+            }
         } else {
-            return new ErrorDataResult<>("Kullanıcı Oluşturulurken Hata Oluştu.");
+            return new ErrorDataResult<>("Bu Kullanıcı Adı Zaten Alınmış.");
         }
     }
 
