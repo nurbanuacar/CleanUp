@@ -7,17 +7,8 @@ package com.mepsan.MlbClean.Survey.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mepsan.MlbClean.Dto.SurveyDto;
 import com.mepsan.MlbClean.Survey.business.SurveyService;
-import com.mepsan.MlbClean.Survey.entity.SurveyEntity;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,7 +59,7 @@ public class SurveyController {
     }
 
     @PostMapping("save")
-    public SurveyDto save(@RequestBody SurveyEntity survey) {
+    public SurveyDto save(@RequestBody SurveyDto survey) {
         return surveyService.save(survey).getData();
     }
 

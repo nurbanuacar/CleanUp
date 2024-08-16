@@ -185,7 +185,7 @@ public class TaskDeviceConManager implements TaskDeviceConService {
     @Override
     public DataResult<TaskStatusResponseDto> getTodayTaskStatus() {
         TaskStatusResponseDto taskResponse = new TaskStatusResponseDto();
-        List<TaskDeviceConEntity> allTodayTasks = taskDeviceConRepository.findByBeginDateBetween(StaticMethods.getStartOfToday(), StaticMethods.getEndOfToday());
+        List<TaskDeviceConEntity> allTodayTasks = taskDeviceConRepository.findByBeginDateBetweenOrderById(StaticMethods.getStartOfToday(), StaticMethods.getEndOfToday());
         if (!allTodayTasks.isEmpty()) {
             List<TaskDeviceConEntity> todayTasks = new ArrayList<>();
             List<TaskDeviceConEntity> todayCompletedTasks = new ArrayList<>();

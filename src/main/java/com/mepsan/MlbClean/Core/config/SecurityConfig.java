@@ -26,6 +26,7 @@ public class SecurityConfig {
         FilterRegistrationBean<TokenAuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new TokenAuthenticationFilter());
         registrationBean.addUrlPatterns("/api/user/*");
+        registrationBean.addUrlPatterns("/api/auth/update");
         registrationBean.addUrlPatterns("/api/v2/user/*");
         registrationBean.addUrlPatterns("/api/task/*");
         registrationBean.addUrlPatterns("/api/v2/task/*");

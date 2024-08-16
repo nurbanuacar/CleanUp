@@ -33,7 +33,8 @@ public class UserManager implements UserService {
 
     @Override
     public DataResult<List<UserDto>> getAllUser() {
-        List<UserEntity> userEntities = userRepository.findAll();
+//        List<UserEntity> userEntities = userRepository.findAll();
+        List<UserEntity> userEntities = userRepository.findByDeletedOrderByUpdateTimeDesc(Boolean.FALSE); 
         if (!userEntities.isEmpty()) {
             List<UserDto> userDtos = new ArrayList<>();
             for (UserEntity user : userEntities) {

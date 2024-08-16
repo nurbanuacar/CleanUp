@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     public List<UserEntity> findByIsAdmin(boolean isAdmin);
 
     public Optional<UserEntity> findByUsername(String username);
-//    public UserDto save(UserDto user); 
 
+    public List<UserEntity> findByDeleted(Boolean deleted);
+
+    public List<UserEntity> findByDeletedOrderByUpdateTimeDesc(Boolean deleted);
 }

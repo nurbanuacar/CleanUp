@@ -48,7 +48,7 @@ public class SurveyControllerDR {
     }
 
     @PostMapping("save")
-    public DataResult<SurveyDto> save(@RequestBody SurveyEntity survey, HttpServletRequest httpServletRequest) {
+    public DataResult<SurveyDto> save(@RequestBody SurveyDto survey, HttpServletRequest httpServletRequest) {
         return surveyService.save(survey);
     }
 

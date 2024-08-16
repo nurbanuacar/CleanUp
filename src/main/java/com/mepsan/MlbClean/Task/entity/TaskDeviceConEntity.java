@@ -47,13 +47,13 @@ public class TaskDeviceConEntity {
     @Column(name = "is_check", columnDefinition = "boolean default false")
     private boolean isCheck;
     @Column(name = "completedate")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date completeDate;
     @Column(name = "begindate")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date beginDate;
     @Column(name = "enddate")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date endDate;
     @Column(columnDefinition = "integer default 1")
 //    @Description("Gunluk -> 1, Haftalik -> 2, Aylik -> 3")

@@ -29,7 +29,7 @@ public class TaskManager implements TaskService {
 
     @Override
     public DataResult<List<TaskDto>> getAllTask() {
-        List<TaskEntity> tasks = taskRepository.findAll();
+        List<TaskEntity> tasks = taskRepository.findByDeleted(Boolean.FALSE);
         if (!tasks.isEmpty()) {
             List<TaskDto> taskDtos = new ArrayList<>();
             for (TaskEntity task : tasks) {
@@ -62,7 +62,7 @@ public class TaskManager implements TaskService {
         task.setUpdateTime(new Date());
         TaskEntity newTask = taskRepository.save(task);
         if (newTask.getId() > 0) {
-            TaskDto taskDto = new TaskDto(newTask.getName());
+            TaskDto taskDto = new TaskDto(newTask.getId(), newTask.getName());
             return new SuccessDataResult<>("Görev Tanımı Oluşturuldu.", taskDto);
         } else {
             return new ErrorDataResult<>("Görev Tanımı Oluşturulamadı.");

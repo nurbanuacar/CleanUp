@@ -42,7 +42,7 @@ public class SurveyEntity {
     @Column
     private int rating;
     @Column(name = "surveydate")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date surveyDate;
     @ManyToOne
     @JoinColumn(name = "device_id", referencedColumnName = "id")
@@ -64,7 +64,15 @@ public class SurveyEntity {
         this.device = device;
         this.deleteTime = deleteTime;
     }
-    
+
+    public SurveyEntity(String comment, String person, int rating, Date surveyDate, DeviceEntity device) {
+        this.comment = comment;
+        this.person = person;
+        this.rating = rating;
+        this.surveyDate = surveyDate;
+        this.device = device;
+    }
+
     public int getId() {
         return id;
     }

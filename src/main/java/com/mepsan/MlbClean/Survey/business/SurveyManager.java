@@ -5,9 +5,12 @@
 package com.mepsan.MlbClean.Survey.business;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mepsan.MlbClean.Core.StaticMethods;
 import com.mepsan.MlbClean.Core.result.DataResult;
 import com.mepsan.MlbClean.Core.result.ErrorDataResult;
 import com.mepsan.MlbClean.Core.result.SuccessDataResult;
+import com.mepsan.MlbClean.Device.entity.DeviceEntity;
+import com.mepsan.MlbClean.Device.repository.DeviceRepository;
 import com.mepsan.MlbClean.Dto.SurveyDto;
 import com.mepsan.MlbClean.Survey.controller.SurveyController;
 import com.mepsan.MlbClean.Survey.entity.SurveyEntity;
@@ -33,6 +36,9 @@ public class SurveyManager implements SurveyService {
     @Autowired
     private SurveyRepository surveyRepository;
 
+    @Autowired
+    private DeviceRepository deviceRepository;
+
     @Override
     public DataResult<List<SurveyDto>> getAllSurvey() {
         List<SurveyEntity> surveys = surveyRepository.findAll();
@@ -40,8 +46,19 @@ public class SurveyManager implements SurveyService {
         if (!surveys.isEmpty()) {
             List<SurveyDto> surveyDtos = new ArrayList<>();
             for (SurveyEntity survey : surveys) {
-                SurveyDto surveyDto = new SurveyDto(survey.getId(), survey.getComment(), survey.getPerson(), survey.getRating(), survey.getSurveyDate(), survey.getDevice());
-                surveyDtos.add(surveyDto);
+                try {
+                    SurveyDto surveyDto = new SurveyDto(
+                            survey.getId(),
+                            survey.getComment(),
+                            survey.getPerson(),
+                            survey.getRating(),
+                            StaticMethods.dateToString(survey.getSurveyDate()),
+                            survey.getDevice());
+                    surveyDtos.add(surveyDto);
+                } catch (ParseException ex) {
+                    Logger.getLogger(SurveyManager.class.getName()).log(Level.SEVERE, null, ex);
+                    return new ErrorDataResult<>("Tarih Dönüşümü Yapılamadı.");
+                }
             }
             return new SuccessDataResult<>("Anketler Başarılı Şekilde Listelendi.", surveyDtos);
         } else {
@@ -53,9 +70,20 @@ public class SurveyManager implements SurveyService {
     public DataResult<SurveyDto> getSurveyById(int id) {
         Optional<SurveyEntity> survey = surveyRepository.findById(id);
         if (survey.isPresent()) {
-            SurveyEntity existSurvey = survey.get();
-            SurveyDto surveyDto = new SurveyDto(existSurvey.getId(), existSurvey.getComment(), existSurvey.getPerson(), existSurvey.getRating(), existSurvey.getSurveyDate(), existSurvey.getDevice());
-            return new SuccessDataResult<>(surveyDto);
+            try {
+                SurveyEntity existSurvey = survey.get();
+                SurveyDto surveyDto = new SurveyDto(
+                        existSurvey.getId(),
+                        existSurvey.getComment(),
+                        existSurvey.getPerson(),
+                        existSurvey.getRating(),
+                        StaticMethods.dateToString(existSurvey.getSurveyDate()),
+                        existSurvey.getDevice());
+                return new SuccessDataResult<>(surveyDto);
+            } catch (ParseException ex) {
+                Logger.getLogger(SurveyManager.class.getName()).log(Level.SEVERE, null, ex);
+                return new ErrorDataResult<>("Tarih Dönüşümü Yapılamadı.");
+            }
         } else {
             return new ErrorDataResult<>("Anket Bulunamadı.");
         }
@@ -69,13 +97,18 @@ public class SurveyManager implements SurveyService {
 
         if (!surveys.isEmpty()) {
             for (SurveyEntity survey : surveys) {
-                surveyDto.setId(survey.getId());
-                surveyDto.setComment(survey.getComment());
-                surveyDto.setDevice(survey.getDevice());
-                surveyDto.setPerson(survey.getPerson());
-                surveyDto.setRating(survey.getRating());
-                surveyDto.setSurveyDate(survey.getSurveyDate());
-                surveyDtos.add(surveyDto);
+                try {
+                    surveyDto.setId(survey.getId());
+                    surveyDto.setComment(survey.getComment());
+                    surveyDto.setDevice(survey.getDevice());
+                    surveyDto.setPerson(survey.getPerson());
+                    surveyDto.setRating(survey.getRating());
+                    surveyDto.setSurveyDate(StaticMethods.dateToString(survey.getSurveyDate()));
+                    surveyDtos.add(surveyDto);
+                } catch (ParseException ex) {
+                    Logger.getLogger(SurveyManager.class.getName()).log(Level.SEVERE, null, ex);
+                    return new ErrorDataResult<>("Tarih Dönüşümü Yapılamadı.");
+                }
             }
             return new SuccessDataResult<>(surveyDtos);
         } else {
@@ -84,21 +117,40 @@ public class SurveyManager implements SurveyService {
     }
 
     @Override
-    public DataResult<SurveyDto> save(SurveyEntity survey) {
+    public DataResult<SurveyDto> save(SurveyDto surveyDto) {
 
-        SurveyEntity newSurvey = surveyRepository.save(survey);
+        int deviceId = surveyDto.getDevice().getId();
+        try {
+            Optional<DeviceEntity> device = deviceRepository.findById(deviceId);
+            if (device.isPresent()) {
+                Date surveyDate = StaticMethods.convertStringToDate(surveyDto.getSurveyDate());
+                SurveyEntity survey = new SurveyEntity(
+                        surveyDto.getComment(),
+                        surveyDto.getPerson(),
+                        surveyDto.getRating(),
+                        surveyDate,
+                        surveyDto.getDevice());
 
-        if (newSurvey.getId() > 0) {
-            SurveyDto surveyDto = new SurveyDto();
-            surveyDto.setId(survey.getId());
-            surveyDto.setComment(survey.getComment());
-            surveyDto.setDevice(survey.getDevice());
-            surveyDto.setPerson(survey.getPerson());
-            surveyDto.setRating(survey.getRating());
-            surveyDto.setSurveyDate(new Date());
-            return new SuccessDataResult<>(surveyDto);
-        } else {
-            return new ErrorDataResult<>("Anket Kaydedilirken Bir Hata Oluştu");
+                SurveyEntity newSurvey = surveyRepository.save(survey);
+
+                if (newSurvey.getId() > 0) {
+                    SurveyDto newSurveyDto = new SurveyDto(
+                            newSurvey.getId(),
+                            newSurvey.getComment(),
+                            newSurvey.getPerson(),
+                            newSurvey.getRating(),
+                            newSurvey.getSurveyDate().toString(),
+                            newSurvey.getDevice());
+                    return new SuccessDataResult<>("Anket Başarıyla Kaydedildi.", newSurveyDto);
+                } else {
+                    return new ErrorDataResult<>("Anket Kaydedilirken Bir Hata Oluştu.");
+                }
+            } else {
+                return new ErrorDataResult<>("Cihaz Bulunamadı.");
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(SurveyManager.class.getName()).log(Level.SEVERE, null, ex);
+            return new ErrorDataResult<>("Tarih Dönüşümü Yapılamadı.");
         }
     }
 
@@ -145,7 +197,7 @@ public class SurveyManager implements SurveyService {
                 surveyDto.setDevice(survey.getDevice());
                 surveyDto.setPerson(survey.getPerson());
                 surveyDto.setRating(survey.getRating());
-                surveyDto.setSurveyDate(survey.getSurveyDate());
+                surveyDto.setSurveyDate(survey.getSurveyDate().toString());
                 surveyDtos.add(surveyDto);
             }
             return new SuccessDataResult<>(surveyDtos);
@@ -168,7 +220,7 @@ public class SurveyManager implements SurveyService {
                 surveyDto.setDevice(survey.getDevice());
                 surveyDto.setPerson(survey.getPerson());
                 surveyDto.setRating(survey.getRating());
-                surveyDto.setSurveyDate(survey.getSurveyDate());
+                surveyDto.setSurveyDate(survey.getSurveyDate().toString());
                 surveyDtos.add(surveyDto);
             }
             return new SuccessDataResult<>(surveyDtos);

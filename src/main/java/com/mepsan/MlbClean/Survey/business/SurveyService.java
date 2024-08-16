@@ -30,7 +30,7 @@ public interface SurveyService {
 
     public DataResult<List<SurveyDto>> getSurveyByDateBetween(JsonNode json);
 
-    public DataResult<SurveyDto> save(SurveyEntity survey);
+    public DataResult<SurveyDto> save(SurveyDto survey);
 
     public void deleteById(int id);
 

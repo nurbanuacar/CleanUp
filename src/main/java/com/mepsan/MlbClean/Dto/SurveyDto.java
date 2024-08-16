@@ -17,13 +17,13 @@ public class SurveyDto {
     private String comment;
     private String person;
     private int rating;
-    private Date surveyDate;
+    private String surveyDate;
     private DeviceEntity device;
 
     public SurveyDto() {
     }
 
-    public SurveyDto(int id, String comment, String person, int rating, Date surveyDate, DeviceEntity device) {
+    public SurveyDto(int id, String comment, String person, int rating, String surveyDate, DeviceEntity device) {
         this.id = id;
         this.comment = comment;
         this.person = person;
@@ -64,11 +64,11 @@ public class SurveyDto {
         this.rating = rating;
     }
 
-    public Date getSurveyDate() {
+    public String getSurveyDate() {
         return surveyDate;
     }
 
-    public void setSurveyDate(Date surveyDate) {
+    public void setSurveyDate(String surveyDate) {
         this.surveyDate = surveyDate;
     }
 

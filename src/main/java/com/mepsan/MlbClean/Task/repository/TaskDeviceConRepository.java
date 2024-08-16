@@ -30,6 +30,8 @@ public interface TaskDeviceConRepository extends JpaRepository<TaskDeviceConEnti
 
     public List<TaskDeviceConEntity> findByBeginDateBetween(Date startDate, Date endDate);
 
+    public List<TaskDeviceConEntity> findByBeginDateBetweenOrderById(Date startDate, Date endDate);
+    
     //BURAYA CALISACAK BİR SORGU OLUSTURAMADIM
 //    @Query(value = "SELECT new com.mepsan.MlbClean.Dto.TaskDeviceConDto(tdc.id, tdc.completedate, tdc.device_id, tdc.is_check, tdc.task_id, tdc.user_id, tdc.frequency, tdc.frequency_array) FROM general.task_device_con tdc WHERE tdc.completedate BETWEEN ?1 AND ?2", nativeQuery = true)
 //    public List<TaskDeviceConDto> findAllByTaskDeviceConCompleteDateBetween(Date startDate, Date endDate);

@@ -31,7 +31,7 @@ public class DeviceManager implements DeviceService {
     @Override
     public DataResult<List<DeviceDto>> getAllDevice() {
 
-        List<DeviceEntity> devices = deviceRepository.findAll();
+        List<DeviceEntity> devices = deviceRepository.findByDeletedOrderByUpdateTimeDesc(Boolean.FALSE);
 
         if (!devices.isEmpty()) {
             List<DeviceDto> deviceDtos = new ArrayList<>();

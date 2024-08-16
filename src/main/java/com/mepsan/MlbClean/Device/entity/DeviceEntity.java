@@ -4,6 +4,7 @@
  */
 package com.mepsan.MlbClean.Device.entity;
 
+import com.mepsan.MlbClean.Survey.entity.SurveyEntity;
 import com.mepsan.MlbClean.Task.entity.TaskDeviceConEntity;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +30,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name = "device", schema = "general")
 @SQLDelete(sql = "UPDATE general.device SET deleted = true, d_time=now() WHERE id=?")
-@Where(clause = "deleted=false")
+//@Where(clause = "deleted=false")
 public class DeviceEntity {
 
     @Id
@@ -52,12 +53,14 @@ public class DeviceEntity {
     @Column(name = "deleted", columnDefinition = "boolean default false")
     private boolean deleted = Boolean.FALSE;
     @Column(name = "d_time")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date deleteTime;
     @Column(name = "device_name",columnDefinition = "varchar(100)")
     private String deviceName;
-    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "device")
     private List<TaskDeviceConEntity> taskDeviceCons;
+    @OneToMany(mappedBy = "device")
+    private List<SurveyEntity> surveys;
 
     public DeviceEntity() {
     }

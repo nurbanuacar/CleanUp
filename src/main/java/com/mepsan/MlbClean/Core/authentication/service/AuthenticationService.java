@@ -79,15 +79,22 @@ public class AuthenticationService {
         Optional<UserEntity> existingUser = authenticationRepository.findByUsername(requestDto.getUsername());
         if (existingUser.isPresent()) {
             Date date = new Date();
-            UserEntity user = new UserEntity(
+
+            UserEntity user = new UserEntity(existingUser.get().getId(), 
                     existingUser.get().getName(),
                     existingUser.get().getSurname(),
                     existingUser.get().getUsername(),
+//                    getHashedPassword(requestDto.getPassword()).getData(),
                     requestDto.getPassword(),
-                    existingUser.get().isIsAdmin(), updateId, date);
+                    existingUser.get().isIsAdmin(),
+                    existingUser.get().getCreateId(),
+                    existingUser.get().getCreateTime(),
+                    updateId,
+                    date,
+                    existingUser.get().getDeleteTime());
             UserEntity updatedUser = authenticationRepository.save(user);
             if (updatedUser != null) {
-                UserDto userDto = new UserDto(updatedUser.getName(), updatedUser.getSurname(), updatedUser.getUsername(), updatedUser.isIsAdmin());
+                UserDto userDto = new UserDto(updatedUser.getId(), updatedUser.getName(), updatedUser.getSurname(), updatedUser.getUsername(), updatedUser.isIsAdmin());
                 return new SuccessDataResult<>("Kullanıcı Parola Güncelleme Başarılı.", userDto);
             } else {
                 return new ErrorDataResult("Kullanıcı Parola Güncellenemedi.");

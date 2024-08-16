@@ -29,7 +29,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name = "user", schema = "general")
 @SQLDelete(sql = "UPDATE general.user SET deleted = true, d_time=now() WHERE id=?")
-@Where(clause = "deleted=false")
+//@Where(clause = "deleted=false")
 public class UserEntity {
 
     @Id
@@ -58,10 +58,24 @@ public class UserEntity {
     @Column(name = "d_time")
     private Date deleteTime;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private List<TaskDeviceConEntity> taskDeviceCons;
 
     public UserEntity() {
+    }
+
+    public UserEntity(int id, String name, String surname, String username, String password, boolean isAdmin, Integer createId, Date createTime, Integer updateId, Date updateTime, Date deleteTime) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.createId = createId;
+        this.createTime = createTime;
+        this.updateId = updateId;
+        this.updateTime = updateTime;
+        this.deleteTime = deleteTime;
     }
 
     public UserEntity(String name, String surname, String username, String password, boolean isAdmin, int createId, Date createTime, int updateId, Date updateTime, boolean deleted, Date deleteTime) {
@@ -77,8 +91,8 @@ public class UserEntity {
         this.deleted = deleted;
         this.deleteTime = new Date();
     }
-    
-        public UserEntity(String name, String surname, String username, String password, boolean isAdmin, int updateId, Date updateTime) {
+
+    public UserEntity(String name, String surname, String username, String password, boolean isAdmin, int updateId, Date updateTime) {
         this.name = name;
         this.surname = surname;
         this.username = username;
@@ -151,8 +165,8 @@ public class UserEntity {
         return name + " " + surname;
     }
 
-    public Optional getCreateId() {
-        return Optional.ofNullable(createId);
+    public int getCreateId() {
+        return createId;
     }
 
     public void setCreateId(int createId) {
@@ -167,8 +181,8 @@ public class UserEntity {
         this.createTime = createTime;
     }
 
-    public Optional getUpdateId() {
-        return Optional.ofNullable(updateId);
+    public int getUpdateId() {
+        return updateId;
     }
 
     public void setUpdateId(int updateId) {

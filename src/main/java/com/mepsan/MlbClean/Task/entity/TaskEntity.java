@@ -7,7 +7,6 @@ package com.mepsan.MlbClean.Task.entity;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +17,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 /**
  *
@@ -27,7 +25,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name = "task", schema = "general")
 @SQLDelete(sql = "UPDATE general.task SET deleted = true, d_time=now() WHERE id=?")
-@Where(clause = "deleted=false")
+//@Where(clause = "deleted=false")
 public class TaskEntity {
 
     @Id
@@ -48,7 +46,7 @@ public class TaskEntity {
     @Column(name = "d_time")
     private Date deleteTime;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task")
     private List<TaskDeviceConEntity> taskDeviceCons;
 
     public TaskEntity() {
